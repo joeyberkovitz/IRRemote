@@ -54,7 +54,7 @@
                 app:fabSize="normal"
                 app:fab_colorNormal="@color/accent"
                 app:fab_colorPressed="@color/accent_dark"
-                app:fab_colorRipple="@color/ripple_material_dark" />
+                app:fab_colorRipple="@color/primary_dark" />
 
         </fragment>
 

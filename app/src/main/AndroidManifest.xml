@@ -5,7 +5,10 @@
 
     <uses-feature
         android:name="android.hardware.consumerir"
-        android:required="true" />
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -43,7 +46,12 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
 
         <!--
@@ -60,6 +68,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:host="localhost"
                     android:mimeType="text/plain"
                     android:pathPattern=".*\\.txt"
                     android:scheme="content" />

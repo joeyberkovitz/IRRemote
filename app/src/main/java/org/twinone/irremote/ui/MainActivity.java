@@ -1,10 +1,15 @@
 package org.twinone.irremote.ui;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -46,6 +51,31 @@ public class MainActivity extends ToolbarActivity implements OnRemoteRenamedList
     private MainNavFragment mNavFragment;
 
     private FloatingActionButton mAddRemoteButton;
+
+    private static final String ACTION_USB_PERMISSION =
+            "org.twinone.irremote.USB_PERMISSION";
+    public static PendingIntent permissionIntent;
+    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if(device != null){
+                            // call method to set up device communication
+                            recreate(context);
+                        }
+                    }
+                    else {
+                        Log.d(TAG, "permission denied for device " + device);
+                    }
+                }
+            }
+        }
+    };
 
     /**
      * Starts MainActivity, but if it's already created, it will recreate
@@ -89,6 +119,12 @@ public class MainActivity extends ToolbarActivity implements OnRemoteRenamedList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        permissionIntent = PendingIntent.getBroadcast(this, 0,
+                new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED);
 
         if (!checkTransmitterAvailable() && !Constants.USE_DEBUG_TRANSMITTER) {
             showNotAvailableDialog();

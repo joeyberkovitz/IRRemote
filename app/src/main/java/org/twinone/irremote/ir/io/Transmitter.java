@@ -38,6 +38,15 @@ public abstract class Transmitter {
      */
     public static Transmitter getInstance(Context c) {
         Transmitter res = null;
+
+        try {
+            res = new TiqUsbTransmitter(c);
+            Log.d("Transmitter", "Using USB transmitter");
+            return res;
+        } catch (Exception e) {
+            Log.w("Transmitter", "Could not instantiate USB transmitter",e);
+        }
+
         try {
             res = new KitKatTransmitter(c);
             Log.d("Transmitter", "Using KitKatTransmitter");
@@ -45,6 +54,7 @@ public abstract class Transmitter {
         } catch (ComponentNotAvailableException ignored) {
             Log.w("Transmitter", "Could not instantiate KitKatTransmitter");
         }
+
         if (Constants.USE_DEBUG_TRANSMITTER) {
             return new DebugTransmitter(c);
         }

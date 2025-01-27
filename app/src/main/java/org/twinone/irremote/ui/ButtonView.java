@@ -112,7 +112,7 @@ public class ButtonView extends CenterImageButton {
             ColorStateList cls = new ColorStateList(
                     new int[][]{new int[]{android.R.attr.state_pressed} // pressed
                     }, new int[]{getResources().getColor(
-                    R.color.ripple_material_dark)});
+                    R.color.primary_dark)});
             RippleDrawable rd = new RippleDrawable(cls, def, null);
             setOutlineProvider(new ViewOutlineProvider() {
 
